@@ -15,16 +15,33 @@ import win32con
 import win32gui
 
 from base import Game, Panel, Widget
+import asyncio
 
-g = Game('LimbusCompany', 0.5)
 
-p1 = Panel(g)
-p2 = Panel(g)
-w1p = Widget('img_lcb/w1p.jpg', p1)
-w2 = Widget('img_lcb/w2.jpg', p1)
-w1 = Widget('img_lcb/w1.jpg', p2)
-w2p = Widget('img_lcb/w2p.jpg', p2)
-g.register_vertex('w1', p1)
-g.register_vertex('w2', p2)
+class Widget_LCB(Widget):
+    def __init__(self, tag, father: Panel):
+        super().__init__(tag, "img_lcb\\%s.bmp" % tag, father)
+
+
+class LimbusCorp(Game):
+    def do_frame(self):
+        self.get_img()
+        self.update_ptr()
+        if not p2.is_current():
+            self.to(p2)
+
+    def frame_func(self):
+        self.do_frame()
+
+
+g = LimbusCorp('LimbusCompany', 0.5)
+
+p1 = Panel('p1', g)
+
+p2 = Panel('p2', g)
+
+w3 = Widget_LCB('w3', p1)
+p1.s(w3).is_the_way_to(p2)
+w3p = Widget_LCB('w3p', p2)
+
 g.frame_func()
-
