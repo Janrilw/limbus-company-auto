@@ -224,7 +224,8 @@ class LimbusCorp(Game):
         while True:
             self.wait()
             print('check upgrade')
-            if p_mir_upgrade.is_current():
+            if w_mir_upgrade_title.click():
+            # if p_mir_upgrade.is_current():
                 return self.upgrade_id()
             w_mir_battle1.click()
             self.wait()
