@@ -30,18 +30,35 @@ def move(x, y):
     pi.moveTo(x, y, duration=0.1)
 
 
+def _sign(x):
+    if x > 0:
+        return 1
+    elif x < 0:
+        return -1
+    else:
+        return 0
+
+
+def scroll(n=10):
+    for _ in range(abs(n)):
+        pi.scroll(10 * _sign(n))
+        # time.sleep(0.05)
+
+
+drag = pi.drag
+
 if __name__ == '__main__':
     m = PyMouse()
 
     print(m.screen_size())
     time.sleep(2)
-    m.click(1652, 1123)
-
-    for i in range(10):
-        print(m.position())
-        click(int(1250 + math.cos(i / 10) * 100), 1250)
-        # m.click(int(1250 + math.cos(i / 10) * 100), 1250)
-        time.sleep(0.1)
+    # m.click(1652, 1123)
+    #
+    # for i in range(10):
+    #     print(m.position())
+    #     click(int(1250 + math.cos(i / 10) * 100), 1250)
+    #     # m.click(int(1250 + math.cos(i / 10) * 100), 1250)
+    #     time.sleep(0.1)
 
     # for i in range(1000):
     #     # m.click(int(1250+math.cos(i/10)*100),1250)

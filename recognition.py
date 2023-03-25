@@ -39,8 +39,8 @@ def _demo():
     cv2.waitKey(0)
 
 
-def _check(src,rsc):
-    match = SIFT(threshold=0.86)
+def _check(src, rsc,th=0.86):
+    match = SIFT(threshold=th)
     im_source = Image(src)
     im_search = Image(rsc)
 
@@ -57,19 +57,19 @@ def _check(src,rsc):
     cv2.waitKey(0)
 
 
-debug=True
+debug = True
 _cur = 1
 
 
-def find_target(im_source, im_search):
-    match = SIFT(threshold=0.8)
+def find_target(im_source, im_search, threshold=0.75):
+    match = SIFT(threshold=threshold)
     # im_source = Image('1.png')
     # im_search = Image('1.png').crop(Rect(681,239,48,48))
 
     if debug:
         global _cur
-        im_source.imwrite("comp_history\\%d_im_source.bmp"%_cur)
-        im_search.imwrite("comp_history\\%d_im_search.bmp"%_cur)
+        im_source.imwrite("comp_history\\%d_im_source.bmp" % _cur)
+        im_search.imwrite("comp_history\\%d_im_search.bmp" % _cur)
         _cur = _cur + 1
 
     # start = time.time()
@@ -81,8 +81,8 @@ def find_target(im_source, im_search):
     res = []
     for r in result:
         # print(r['rect'].x, r['rect'].y, r['confidence'])
-        rec=r['rect']
-        res.append((int(rec.x+rec.width/2), int(rec.y+rec.height/2), r['confidence']))
+        rec = r['rect']
+        res.append((int(rec.x + rec.width / 2), int(rec.y + rec.height / 2), r['confidence']))
     return res
     # img = im_source.clone()
     # for _ in result:
@@ -98,14 +98,15 @@ def find_target(im_source, im_search):
 #     return res["result"] if res else (-1, -1)
 
 
-
 if __name__ == '__main__':
     # _demo()
+    choose = '61'
     for root, dirs, files in os.walk("comp_history"):
-        twin=["",""]
-        for i,file in enumerate(files):
+        twin = ["", ""]
+        for i, file in enumerate(files):
             path = os.path.join(root, file)
-            twin[i%2]=path
-            if i%2==1:
-                print('checking',twin[1],twin[0])
-                _check(twin[1],twin[0])
+            twin[i % 2] = path
+            if i % 2 == 1:
+                if choose in path:
+                    print('checking', twin[1], twin[0])
+                    _check(twin[1], twin[0],0.5)

@@ -5,6 +5,7 @@ import win32gui, win32ui, win32con, win32api
 from PIL import Image, ImageGrab
 import time
 
+
 def screen_capture(filename, hwnd):
     """全屏截图尝试"""
     hwnd = 0  # 窗口的编号，0号表示当前活跃窗口
@@ -112,7 +113,7 @@ def window_capture(name, show=False, save=None):
     if save:
         img_ready.save(save)
     img_ready.save('tmp.bmp')
-    return Image2('tmp.bmp'),x1+8, y1+31
+    return Image2('tmp.bmp'), x1 + 8, y1 + 31, x2 - x1 - 16, y2 - y1 - 31 - 8
     # return np.asarray(img_ready)
 
 
