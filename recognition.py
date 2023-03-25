@@ -67,6 +67,7 @@ def find_target(im_source, im_search, threshold=0.75):
     # im_search = Image('1.png').crop(Rect(681,239,48,48))
 
     if debug:
+        os.makedirs('comp_history',exist_ok=True)
         global _cur
         im_source.imwrite("comp_history\\%d_im_source.bmp" % _cur)
         im_search.imwrite("comp_history\\%d_im_search.bmp" % _cur)

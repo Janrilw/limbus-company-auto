@@ -285,8 +285,8 @@ class LimbusCorp(Game):
         pass
 
     def do_frame(self):
-        # self.to(p_mirror1_conf)
-        # w_mirror1_conf.click()
+        self.to(p_mirror1_conf)
+        w_mirror1_conf.click()
         self.mirror_dungeon()
 
         return True
