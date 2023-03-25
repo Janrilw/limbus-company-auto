@@ -112,7 +112,7 @@ def window_capture(name, show=False, save=None):
     if save:
         img_ready.save(save)
     img_ready.save('tmp.bmp')
-    return Image2('tmp.bmp'),x1, y1
+    return Image2('tmp.bmp'),x1+8, y1+31
     # return np.asarray(img_ready)
 
 

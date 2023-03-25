@@ -57,7 +57,8 @@ def _check(src,rsc):
     cv2.waitKey(0)
 
 
-# _cur = 1
+debug=True
+_cur = 1
 
 
 def find_target(im_source, im_search):
@@ -65,10 +66,11 @@ def find_target(im_source, im_search):
     # im_source = Image('1.png')
     # im_search = Image('1.png').crop(Rect(681,239,48,48))
 
-    # global _cur
-    # im_source.imwrite("comp_history\\%d_im_source.bmp"%_cur)
-    # im_search.imwrite("comp_history\\%d_im_search.bmp"%_cur)
-    # _cur = _cur + 1
+    if debug:
+        global _cur
+        im_source.imwrite("comp_history\\%d_im_source.bmp"%_cur)
+        im_search.imwrite("comp_history\\%d_im_search.bmp"%_cur)
+        _cur = _cur + 1
 
     # start = time.time()
     result = match.find_all_results(im_source, im_search)
@@ -80,7 +82,7 @@ def find_target(im_source, im_search):
     for r in result:
         # print(r['rect'].x, r['rect'].y, r['confidence'])
         rec=r['rect']
-        res.append((int(rec.x+rec.width/2), int(rec.y+rec.height), r['confidence']))
+        res.append((int(rec.x+rec.width/2), int(rec.y+rec.height/2), r['confidence']))
     return res
     # img = im_source.clone()
     # for _ in result:

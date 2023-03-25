@@ -17,13 +17,17 @@ from pymouse.windows import PyMouse
 import pyautogui as pi
 import win32api
 
+
 def click(x, y):
     print('clicked', x, y)
-    pi.moveTo(x, y, duration=0.25)
+    pi.moveTo(x, y, duration=0.1)
     # time.sleep(.7)
     pi.click()
     # win32api.SetCursorPos((x,y))
 
+
+def move(x, y):
+    pi.moveTo(x, y, duration=0.1)
 
 
 if __name__ == '__main__':
