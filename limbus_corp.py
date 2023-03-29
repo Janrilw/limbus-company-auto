@@ -62,6 +62,7 @@ class Widget_Auto(Widget):
 
 class Widget_Simple(Widget_Auto):
     """无附着的控件，可以直接当一个图片来click和check"""
+
     def __init__(self, tag, path=None):
         super(Widget_Simple, self).__init__(tag, path, father=False)
 
@@ -78,7 +79,8 @@ class Event(Widget_Simple):
         self.default_act = default_act
         self.task = None
 
-    def do(self):
+    def do(self):  # 进入事件面板后的操作
+        # 下面是默认的操作
         w_mir_event_skip.click()
         self.father.father.wait(2)
         w_mir_event_skip.click()
@@ -93,13 +95,15 @@ class Event(Widget_Simple):
             self.father.father.wait()
             w_mir_event_con.click()
             pass
-        self.father.father.wait()
+        self.father.father.wait(2)
+
+        # 下面是根据不同事件做的操作差分
         if self.tag == 'event1':
             self.father.father.upgrade_id()
 
 
-
-events = [Event('event%d' % i, 1) for i in range(1, 2)]
+NUM_EVENT = 1  # 登记的事件总数
+events = [Event('event%d' % i, 1) for i in range(1, NUM_EVENT + 1)]
 events.append(Event('event0', 1))
 
 
