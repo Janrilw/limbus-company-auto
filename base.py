@@ -92,11 +92,11 @@ class Game:
             if n > 1:
                 # print('\r', end='')
                 pass
-            print('[waiting], end of frame %d' % self.timer, end='')
+            # print('[waiting], end of frame %d' % self.timer, end='')
             self.timer += 1
             time.sleep(max(0, -(time.time() - self.stt) + self._wait))
             self.stt = time.time()
-            print('[waited], begin of frame %d' % self.timer)
+            # print('[waited], begin of frame %d' % self.timer)
         # print('\r', end='')
 
     def get_img(self):
@@ -168,15 +168,17 @@ class Panel:
         pass
 
     def is_current(self):
-        if self.father.cur is not None:
-            return self.tag == self.father.cur
+        # if self.father.cur is not None:
+        #     return self.tag == self.father.cur
         flag = True
+        # print('is current', self.tag)
+        self.father.get_img()
         for v in self.widgets.values():
             x, y, c = v.check_existence()
             # print('check position:', v.c_path, x, y)
             flag = flag and (x != 0) and (y != 0)
             if not flag:
-                print('not this')
+                # print('not this')
                 return False
             else:
                 # print("%.2f%%" % (c * 100), end=',')
@@ -188,7 +190,12 @@ class Panel:
     def to(self, to_panel):
         print('move from', self.tag, 'to', to_panel.tag)
         x, y, c = self.edges[to_panel].check_existence()
+        while x == 0:
+            self.father.wait()
+            self.father.get_img()
+            x, y, c = self.edges[to_panel].check_existence()
         self.edges[to_panel]._click(x, y)
+
 
 
 class _f:
@@ -198,6 +205,7 @@ class _f:
 
 
 class Widget:
+    last_click: (0, 0)
 
     def __init__(self, tag, c_path, father: Panel = None):
         global cur_panel
@@ -215,13 +223,21 @@ class Widget:
             self.father = father
             father.register_widget(tag, self)
 
-    def check_existence(self, limit: Rect = None):
+    def is_exist(self, limit: Rect = None):
+        return self.check_existence(limit) != 0
+
+    def check_existence(self, limit: Rect = None, forbid: (Rect,) = None):
         img = self.father.father.img
         t = find_target(img, self.img, threshold=self._confidence)
         if limit is not None:
             result = []
             for v in t:
-                if limit.contains(Rect(v[0], v[1], 0.1, 0.1)):
+                dot = Rect(v[0], v[1], 0.01, 0.01)
+                if limit.contains(dot):
+                    if forbid:
+                        for f in forbid:
+                            if f.contains(dot):
+                                continue
                     result.append(v)
             t = result
 
@@ -246,13 +262,13 @@ class Widget:
             return []
 
     def _click(self, x, y):
-        click(self.father.father.offset_x + x, self.father.father.offset_y + y)
         self.last_click = (x, y)
+        click(self.father.father.offset_x + x, self.father.father.offset_y + y)
 
-    def click(self, n=1, auto_fetch=True, limit=None):
+    def click(self, n=1, auto_fetch=True, limit=None, forbid=None):
         if auto_fetch:
             self.father.father.get_img()
-        param = self.check_existence(limit=limit)
+        param = self.check_existence(limit=limit, forbid=forbid)
         x, y, c = param
         if c == 0:
             print('cannot find button!')
