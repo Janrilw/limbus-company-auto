@@ -9,13 +9,13 @@ info:
 - author: 云绝万里
 - email: janrilw@163.com
 """
-import math
-import time
+# import math
+# import time
 
-import pymouse
-from pymouse.windows import PyMouse
+# import pymouse
+# from pymouse.windows import PyMouse
 import pyautogui as pi
-import win32api
+# import win32api
 
 
 def click(x, y):
@@ -48,10 +48,7 @@ def scroll(n=10):
 drag = pi.drag
 
 if __name__ == '__main__':
-    m = PyMouse()
-
-    print(m.screen_size())
-    time.sleep(2)
+    pass
     # m.click(1652, 1123)
     #
     # for i in range(10):

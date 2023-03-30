@@ -1,4 +1,4 @@
-name: base
+name: autogame
 channels:
   - defaults
 dependencies:

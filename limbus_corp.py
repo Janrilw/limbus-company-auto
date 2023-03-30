@@ -13,10 +13,10 @@ from __future__ import annotations
 
 import os.path
 import random
-import time
+# import time
 
 import mouse
-import pyautogui as pi
+# import pyautogui as pi
 
 from base import Game, Panel, Widget
 from baseImage import Image, Rect
@@ -73,7 +73,13 @@ class NODE:
     fin = 3
 
 
+class _f:
+    father: LimbusCorp
+
+
 class Event(Widget_Simple):
+    father: _f
+
     def __init__(self, tag, default_act):
         super().__init__(tag)
         self.default_act = default_act
@@ -100,9 +106,11 @@ class Event(Widget_Simple):
         # 下面是根据不同事件做的操作差分
         if self.tag == 'event1':
             self.father.father.upgrade_id()
+        if self.tag == 'event2':
+            self.father.father.select_sinner()
 
 
-NUM_EVENT = 1  # 登记的事件总数
+NUM_EVENT = 3  # 登记的事件总数
 events = [Event('event%d' % i, 1) for i in range(1, NUM_EVENT + 1)]
 events.append(Event('event0', 1))
 

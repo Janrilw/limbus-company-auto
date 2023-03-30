@@ -12,7 +12,7 @@ info:
 """
 import time
 
-import numpy as np
+# import numpy as np
 
 from screenshot import window_capture
 from recognition import find_target
