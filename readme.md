@@ -1,30 +1,28 @@
 # Autogame 边狱巴士自动化
 
 ## 简介
-刷镜之地牢真的太坐牢，所以尝试了一下自动化。
-
-这个自动化只适配电脑steam端，且脚本运行时你不能干别的事情。
-
-目前的版本只能半自动化，可能跑着跑着卡壳了。代码会随着时间逐渐完善，也欢迎大家来提pr。
-
-在很久以前在网上找了图像识别方面的代码，改到能用之后放在这里，即baseImage和image_registration两个模块。如有侵权请联系删除。
+* 刷镜之地牢真的太坐牢，所以尝试了一下自动化。
+* 这个自动化只适配电脑steam端，**且脚本运行时你不能干别的事情**。
+* 目前的版本能比较稳定地自动化，但也可能跑着跑着卡壳了。代码会随着时间逐渐完善，也欢迎大家来提pr。
+* 在很久以前在网上找了图像识别方面的代码，改到能用之后放在这里，即baseImage和image_registration两个模块。如有侵权请联系删除。
 
 
 ## 注意
-**无法保证滥用此脚本带来的封号风险！**
+**无法保证滥用此脚本带来的封号风险！** 请在正常范围内使用！
 
 ## 使用方法
-因为时间有限，在此简要列出使用方法。
-对于熟练使用者，直接用仓库自带的environment.yaml构建新环境，再在pycharm里跑就行。但是pycharm**必须用管理员模式启动**，游戏本体似乎用了一些手段来屏蔽非人工操作。
+时间有限，在此简要列出使用方法。
 
-完整步骤：
 
-1. 下载 [Miniconda](https://docs.conda.io/en/latest/miniconda.html) 并安装。（其完整版Anaconda过于庞大，推荐此精简版）
-2. 以管理员模式运行Miniconda3 Prompt，并用指令`conda env create -f environment.yaml`创建python虚拟环境。（注意用cd指令切换到仓库所在目录） 参考 [conda使用之.yaml文件环境配置文件用于新设备部署环境 - 知乎](https://zhuanlan.zhihu.com/p/586560032) 。
+操作步骤：
+0. 这个步骤对于完全不懂python的小白可能需要一定时间来研究。
+1. 下载 [Miniconda](https://docs.conda.io/en/latest/miniconda.html) 并安装。（其完整版Anaconda过于庞大，推荐此精简版，也不容易出现散装python的情况）
+2. 按`Windows+S`搜索`Miniconda3 Prompt`，并右键以管理员模式启动。
+3. 用conda或者pip安装`opencv`、`pywin32`、`pyautogui`、`numpy`这几个模块，如果pip还不行那就百度“pip清华镜像源”。安装模块的代码是`conda install opencv`或者`pip install opencv`，我也不记得拿哪个装的了，装不起来的话两个都试试。要是装起来还是头大，那就装个完整版Anaconda，然后打开Anaconda Navigator，有图形化界面装起来舒服一些。也许运行的时候还会报错，说少了什么模块，一般少什么装什么就好。
 4. 进入游戏，登录进入主界面，放着不动。
-3. 使用指令`conda activate autogame` 激活虚拟环境，注意用cd指令切换到仓库所在目录，然后用指令`python limbus_corp.py`运行自动化脚本。游戏能自动切换过去。
+5. 用cd指令跳转到本仓库目录，输入`python limbus_corp.py`运行脚本。
 
-
+如果用pycharm运行也**必须用管理员模式启动**。
 
 
 
