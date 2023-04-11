@@ -46,13 +46,15 @@ def EnumWindows():
     return ret
 
 
-# def FindWindow(by_title):
-#     ws = EnumWindows()
-#     hwnd = None
-#     for k in ws:
-#         if by_title == ws[k]:
-#             hwnd = k
-#             break
+def FindWindow(by_title):
+    ws = EnumWindows()
+    # hwnd = None
+    for k in ws:
+        if by_title == ws[k]:
+            # hwnd = k
+            return True
+            # break
+    return False
 #     if hwnd is not None:
 #         # if hwnd!=win32gui.GetForegroundWindow():
 #         #     shell=win32com.client.Dispatch('WScript.Shell')

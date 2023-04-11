@@ -14,12 +14,14 @@ from __future__ import annotations
 import os.path
 import random
 # import time
+import urllib.request
 
 import mouse
 # import pyautogui as pi
 
 from base import Game, Panel, Widget
 from baseImage import Image, Rect
+import screenshot
 
 
 class Widget_Auto(Widget):
@@ -87,32 +89,53 @@ class Event(Widget_Simple):
 
     def do(self):  # 进入事件面板后的操作
         # 下面是默认的操作
+        father=self.father.father
         w_mir_event_skip.click()
-        self.father.father.wait(2)
+        father.wait(2)
         w_mir_event_skip.click()
-        self.father.father.wait(2)
+        father.wait(2)
         if self.task:
             pass
         else:
             w_mir_event_btn.click_by_index(self.default_act - 1)
             w_mir_event_skip.click()
-            self.father.father.wait()
+            father.wait()
             w_mir_event_skip.click()
-            self.father.father.wait()
-            w_mir_event_con.click()
+            father.wait()
+            if w_mir_event_con.click():
+                father.wait(2)
+                # 下面是根据不同事件做的操作差分
+                if self.tag == 'event1':
+                    father.upgrade_id()
+                if self.tag == 'event2':
+                    father.select_sinner()
+                    father.select_id()
+                if self.tag == 'event3':
+                    pass
+                else:
+                    pass
+
+                pass
+            elif w_mir_event_pro.click():
+                father.wait()
+                w_mir_event_skip.click()
+                father.wait()
+                w_mir_event_very_high.click()
+                father.wait()
+                w_mir_event_com.click()
+                father.wait_for_connect()
+                w_mir_event_skip.click(3)
+                father.wait()
+                w_mir_event_skip.click(3)
+                if not w_mir_event_con.click():
+                    pass
+                father.wait()
+                conf.click()
+
+                pass
+
             pass
-        self.father.father.wait(2)
-
-        # 下面是根据不同事件做的操作差分
-        if self.tag == 'event1':
-            self.father.father.upgrade_id()
-        if self.tag == 'event2':
-            self.father.father.select_sinner()
-
-
-NUM_EVENT = 3  # 登记的事件总数
-events = [Event('event%d' % i, 1) for i in range(1, NUM_EVENT + 1)]
-events.append(Event('event0', 1))
+        father.wait(2)
 
 
 class LimbusCorp(Game):
@@ -151,6 +174,7 @@ class LimbusCorp(Game):
                 print('wait 5')
                 self.wait(5)
                 retry.click()
+                count = 0
 
     def wait_for_panel(self, panel):
         print('wait for panel', panel.tag)
@@ -162,17 +186,18 @@ class LimbusCorp(Game):
             count += 1
             self.wait()
 
-    def mirror_dungeon(self):
+    def mirror_dungeon(self, floor=1):
         # w_mir_char_conf.check_existence()
-        self.floor = 1
-        self.wait()
-        self.update_ptr()
-        self.wait_for_connect()
+        self.floor = floor
+        if floor == 1:
+            self.wait()
+            self.update_ptr()
+            self.wait_for_connect()
 
-        self.select_ego_gift()
-        self.select_sinner()
-        self.select_id()
-        self.wait_for_connect()
+            self.select_ego_gift()
+            self.select_sinner()
+            self.select_id()
+            self.wait_for_connect()
 
         while True:
             self.get_img()
@@ -181,8 +206,8 @@ class LimbusCorp(Game):
             node = self.select_node()
             # node=NODE.battle
             if node == NODE.battle:
-                # self.wait_for_connect()
-                # self.wait_for_load()
+                self.wait_for_connect()
+                self.wait_for_load()
                 self.battle()
             elif node == NODE.event:
                 self.wait()
@@ -195,14 +220,25 @@ class LimbusCorp(Game):
             elif node == NODE.fin:
                 self.wait_for_connect()
                 self.wait_for_load()
-                self.battle()
-                self.select_ego_gift()
-                self.select_sinner()
-                self.select_id()
-                self.wait_for_connect()
-                self.wait(2)
-                conf.click()
+                self.battle(is_fin3=self.floor == 3)
+                if self.floor < 3:
+                    self.select_ego_gift()
+                    self.select_sinner()
+                    self.select_id()
+                    self.wait_for_connect()
+                    self.wait(2)
+                    conf.click()
+                else:
+                    pass
                 self.floor += 1
+                if self.floor > 3:
+                    conf.click()
+                    self.wait()
+                    conf.click()
+                    self.wait_for_load()
+                    conf.click()
+
+                    return
 
         pass
 
@@ -221,35 +257,47 @@ class LimbusCorp(Game):
     def select_node(self):
         self.wait_for_panel(p_mir_road)
         if p_mir_road.is_current():
-            forbid = []
-            w_mir_mark.click()
-            if self.floor % 2 == 0:
-                rect = Rect(0, 0, w_mir_mark.last_click[0] - 0.09 * self.w, self.h)
-            else:
-                rect = Rect(w_mir_mark.last_click[0] + 0.09 * self.w, 0, self.w, self.h)
+            while True:
+                forbid = []
+                w_mir_mark.click()
+                if self.floor % 2 == 0:
+                    rect = Rect(0, 0, w_mir_mark.last_click[0] - 0.09 * self.w, self.h)
+                else:
+                    rect = Rect(w_mir_mark.last_click[0] + 0.09 * self.w, 0, self.w, self.h)
 
-            self.wait()
-            ev, last = self.click_node(rect, forbid)
-            while type(last) != tuple:
-                mouse.scroll(int(random.randint(-20, 20)))
-                ev, last = self.click_node(rect, forbid)
-            print(ev, last)
-            x, y = last
-            count = 0
-            while not w_mir_road_enter.click():
-                forbid.append(Rect(x - 5, y + 5, 10, 10))
-                ev, last = self.click_node(rect, forbid)
-                x, y = last
                 self.wait()
-                count += 1
-                if count > 10:
-                    raise Exception('我找不到')
+                ev, last = self.click_node(rect, forbid)
+                while type(last) != tuple:
+                    mouse.scroll(int(random.randint(-20, 20)))
+                    ev, last = self.click_node(rect, forbid)
+                print(ev, last)
+                x, y = last
+                count = 0
+                flag = False
+                while not w_mir_road_enter.click():
+                    forbid.append(Rect(x - 5, y + 5, 10, 10))
+                    ev, last = self.click_node(rect, forbid)
+                    if last == 0:
+                        flag = True
+                        break
+                    x, y = last
+                    self.wait()
+                    count += 1
+                    if count > 10:
+                        flag = True
+                        break
+                        # raise Exception('我找不到')
+                if flag:
+                    print('我找不到啊啊啊啊')
+                    continue
+                break
 
             self.wait()
 
             if ev == NODE.battle or ev == NODE.fin:
-                for v in range(12):
-                    w_id_char_prefer[v].click()
+                if len(w_mir_ui_selected.check_multi_existence()) < 2 + self.floor:
+                    for v in range(12):
+                        w_id_char_prefer[v].click()
                 w_mir_combat.click()
             elif ev == NODE.event:
                 pass
@@ -257,7 +305,7 @@ class LimbusCorp(Game):
             return ev
         pass
 
-    def battle(self):
+    def battle(self, is_fin3=False):
         self.wait_for_panel(p_mir_battle)
         w_mir_battle1.click()
         self.wait()
@@ -265,19 +313,25 @@ class LimbusCorp(Game):
         break_count = 0
         while True:
             self.wait()
-            print('check upgrade')
             # if w_mir_upgrade_title.is_exist():
-            if p_mir_upgrade.is_current():
-                print('find upgrade')
-                break_count += 1
-                if break_count > 2:
-                    return self.upgrade_id()
-            print('check ego')
-            if p_mir_ego_chs.is_current():
-                print('find ego')
-                break_count += 1
-                if break_count > 2:
-                    return self.select_ego_gift()
+            if is_fin3:
+                if retry.click():
+                    self.wait(5)
+                if w_mir_battle_reward.click():
+                    return
+            else:
+                print('check upgrade')
+                if p_mir_upgrade.is_current():
+                    print('find upgrade')
+                    break_count += 1
+                    if break_count > 2:
+                        return self.upgrade_id()
+                print('check ego')
+                if p_mir_ego_chs.is_current():
+                    print('find ego')
+                    break_count += 1
+                    if break_count > 2:
+                        return self.select_ego_gift()
             w_mir_battle1.click()
             self.wait()
             w_mir_battle2.click()
@@ -288,6 +342,7 @@ class LimbusCorp(Game):
             if w_id_char_prefer[i].click():
                 conf.click()
                 w_mir_upgrade_to_ego.click()
+                w_id_char_ego_prefer[i].click()
                 w_mir_upgrade_ego_conf.click()
 
                 self.wait_for_connect()
@@ -305,12 +360,15 @@ class LimbusCorp(Game):
         for i in range(1, 13):
             if w_id_char_face[i - 1].click():
                 w_id_char_prefer[i - 1].click()
-                conf.click(2, auto_fetch=False)
+                conf.click(1)
+                w_id_char_ego_prefer[i - 1].click()
+                conf.click(1, auto_fetch=False)
+
         conf2.click()
 
     def select_sinner(self):
         print('select_sinner')
-        prefer = [12, 5, 6, 8, 2]
+        prefer = [12, 6, 7, 11, 2]
         self.wait_for_panel(p_mir_char_chs)
         for v in prefer:
             w_chars_id[v - 1].click()
@@ -336,20 +394,35 @@ class LimbusCorp(Game):
         pass
 
     def do_frame(self):
-        ui_init.click()
-        self.to(p_mirror1_conf)
-        w_mirror1_simu.click()
-        w_mirror1_conf.click()
-        self.mirror_dungeon()
+        while True:
+            self.to(p_mirror1_conf)
+            # w_mirror1_simu.click()
+            w_mirror1_conf.click()
+            self.mirror_dungeon()
+            self.wait(5)
+            if self == 1:
+                break
+
 
         return True
 
     def frame_func(self):
+        self.wait_for_game_run()
         for e in events:
             e.father.father = self
         self.get_img()
         self.update_ptr()
         self.do_frame()
+
+    def wait_for_game_run(self):
+        while not screenshot.FindWindow(self.title):
+            print('\rgame window not detected!', end='')
+            self.wait(2)
+        print('\rgame window detected!')
+        self.wait()
+        if ui_init.click():
+            self.wait_for_connect()
+            self.wait_for_load()
 
 
 for root, dirs, files in os.walk("comp_history"):
@@ -358,6 +431,10 @@ for root, dirs, files in os.walk("comp_history"):
         os.remove(path)
 
 game = LimbusCorp('LimbusCompany', 0.6)
+
+NUM_EVENT = 3  # 登记的事件总数
+events = [Event('event%d' % i, 1) for i in range(1, NUM_EVENT + 1)]
+events.append(Event('event0', 1))
 
 ui_init = Widget_Simple('ui_init')
 
@@ -398,6 +475,7 @@ w_mir_char_conf = Widget_Simple('sinner_conf')
 p_mir_id_chs1 = Panel('镜牢罪人人格选择')
 w_id_sel1 = Widget_Auto('id_sel').set_confidence(0.65)
 w_id_char_face = [Widget_Simple('sinner%d' % i) for i in range(1, 13)]
+w_id_char_ego_prefer = [Widget_Simple('ego_pre%d' % i) for i in range(1, 13)]
 w_id_char_prefer = [Widget_Simple('sinner_pre%d' % i).set_confidence(0.85) for i in range(1, 13)]
 
 p_mir_road = Panel('镜牢路线')
@@ -413,6 +491,8 @@ p_mir_battle = Panel('镜牢打架')
 w_mir_battle = Widget_Auto('battle_c')
 w_mir_battle1 = Widget_Simple('battle_step1')
 w_mir_battle2 = Widget_Simple('battle_step2')
+w_mir_battle_reward = Widget_Simple('battle_reward')
+w_mir_ui_selected = Widget_Simple('ui_selected')
 
 p_mir_upgrade = Panel('镜牢升级')
 w_mir_upgrade_title = Widget_Auto('battle_upgrade')
@@ -424,8 +504,13 @@ w_mir_event_c = Widget_Auto('event_c')
 w_mir_event_skip = Widget_Simple('ui_skip')
 w_mir_event_btn = Widget_Simple('event_btn')
 w_mir_event_con = Widget_Simple('event_con')
+w_mir_event_com = Widget_Simple('event_com')
+w_mir_event_pro = Widget_Simple('event_pro')
+w_mir_event_very_high = Widget_Simple('event_very_high')
 
 # game.floor = 1
 # game.get_img()
 # game.select_node()
+
+# game.mirror_dungeon(floor=3)
 game.frame_func()

@@ -118,6 +118,8 @@ class Game:
                     self.cur = k
                     print('FIND!', k)
                     break
+                else:
+                    print("not this")
 
     def do_frame(self):
         self.get_img()
@@ -249,7 +251,11 @@ class Widget:
             return 0, 0, 0
 
     def check_multi_existence(self):
-        img = self.father.father.img
+        try:
+            img = self.father.father.img
+        except:
+            global cur_game
+            img=cur_game.img
         t = find_target(img, self.img, threshold=self._confidence)
         if len(t) > 0:
             print('find widget:%s' % self.tag, end=':')
